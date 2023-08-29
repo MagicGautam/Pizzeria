@@ -1,7 +1,6 @@
 package com.Pizzeria.backend.Inventory;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Data;
 
 import java.util.List;
@@ -23,4 +22,8 @@ public class FoodItem {
     private String description;
     private String category;
     private List<String> imageUrl;
+
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "food_item_id")
+    private List<Ingredient> ingredients;
 }
