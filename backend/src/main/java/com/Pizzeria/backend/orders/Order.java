@@ -1,6 +1,5 @@
 package com.Pizzeria.backend.orders;
 
-import com.Pizzeria.backend.Inventory.FoodItem;
 import jakarta.persistence.*;
 import lombok.Data;
 

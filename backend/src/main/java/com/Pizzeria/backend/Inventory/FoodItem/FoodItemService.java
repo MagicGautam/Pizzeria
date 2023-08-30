@@ -1,11 +1,12 @@
-package com.Pizzeria.backend.Inventory;
+package com.Pizzeria.backend.Inventory.FoodItem;
 
+import com.Pizzeria.backend.Inventory.Ingregient.Ingredient;
+import com.Pizzeria.backend.Inventory.Ingregient.IngredientRepository;
 import com.Pizzeria.backend.errors.InsufficientStockException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -92,4 +93,5 @@ public class FoodItemService {
         foodItem.setImageUrl(dto.getImageUrl());
         return foodItem;
     }
+
 }

@@ -1,5 +1,6 @@
-package com.Pizzeria.backend.Inventory;
+package com.Pizzeria.backend.Inventory.FoodItem;
 
+import com.Pizzeria.backend.Inventory.Ingregient.Ingredient;
 import jakarta.persistence.*;
 import lombok.Data;
 

@@ -1,4 +1,4 @@
-package com.Pizzeria.backend.Inventory;
+package com.Pizzeria.backend.Inventory.Ingregient;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
