@@ -1,4 +1,4 @@
-package com.Pizzeria.backend.Inventory;
+package com.Pizzeria.backend.Inventory.FoodItem;
 
 import lombok.Data;
 
