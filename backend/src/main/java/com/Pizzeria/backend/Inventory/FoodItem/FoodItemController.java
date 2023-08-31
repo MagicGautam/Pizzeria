@@ -30,15 +30,15 @@ public class FoodItemController {
         return ResponseEntity.ok(foodItems);
     }
 
-    @PostMapping
-    public ResponseEntity<Void> addNewFoodItem(@RequestBody FoodItemDto foodItemDto) {
-        foodItemService.addNewFoodItem(foodItemDto);
+    @PostMapping("/addFoodItem")
+    public ResponseEntity<Void> addNewFoodItem(@RequestBody FoodItem foodItem) {
+        foodItemService.addNewFoodItem(foodItem);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @PutMapping("/{foodId}")
-    public ResponseEntity<Void> updateFoodItem(@PathVariable Long foodId, @RequestBody FoodItemDto foodItemDto) {
-        foodItemService.updateFoodItem(foodId, foodItemDto);
+    public ResponseEntity<Void> updateFoodItem(@PathVariable Long foodId, @RequestBody FoodItem foodItem) {
+        foodItemService.updateFoodItem(foodId, foodItem);
         return ResponseEntity.ok().build();
     }
 

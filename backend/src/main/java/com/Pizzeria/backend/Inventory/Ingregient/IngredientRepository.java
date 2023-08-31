@@ -7,4 +7,6 @@ import org.springframework.stereotype.Repository;
 public interface IngredientRepository extends JpaRepository<Ingredient, Long> {
 
     Ingredient findByIngredientId(Long ingredientId);
+
+    Ingredient findByName(String name);
 }
