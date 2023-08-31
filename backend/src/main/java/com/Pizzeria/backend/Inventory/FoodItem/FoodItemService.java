@@ -1,5 +1,6 @@
 package com.Pizzeria.backend.Inventory.FoodItem;
 
+import com.Pizzeria.backend.Inventory.Ingregient.FoodItemIngredientDto;
 import com.Pizzeria.backend.Inventory.Ingregient.Ingredient;
 import com.Pizzeria.backend.Inventory.Ingregient.IngredientRepository;
 import com.Pizzeria.backend.errors.InsufficientStockException;
@@ -30,8 +31,7 @@ public class FoodItemService {
         return foodItems.stream().map(this::mapToDto).collect(Collectors.toList());
     }
 
-    public void addNewFoodItem(FoodItemDto foodItemDto) {
-        FoodItem foodItem = mapToEntity(foodItemDto);
+    public void addNewFoodItem(FoodItem foodItem) {
         foodItemRepository.save(foodItem);
     }
 
@@ -43,22 +43,22 @@ public class FoodItemService {
         foodItemRepository.deleteById(foodId);
     }
 
-    public void updateFoodItem(Long foodId, FoodItemDto foodItemDto) {
+    public void updateFoodItem(Long foodId, FoodItem foodItem) {
         boolean exists = foodItemRepository.existsById(foodId);
         if (!exists) {
             throw new IllegalStateException("Food item with id " + foodId + " does not exist");
         }
 
-        FoodItem foodItem = mapToEntity(foodItemDto);
         foodItem.setFood_Id(foodId);
         foodItemRepository.save(foodItem);
     }
 
     public void reduceIngredientsFromInventory(FoodItemDto foodItemDto) {
         FoodItem foodItem = mapToEntity(foodItemDto);
-        List<Ingredient> ingredients = foodItem.getIngredients();
+        List<FoodItemIngredientDto> foodItemIngredientDtos = foodItem.getIngredients();
 
-        for (Ingredient ingredient : ingredients) {
+        for (FoodItemIngredientDto foodItemIngredientDto : foodItemIngredientDtos) {
+           Ingredient ingredient= ingredientRepository.findByName(foodItemIngredientDto.getName());
             int currentStock = ingredient.getStock();
             int requiredQuantity = 1; // Assuming one food item reduces one ingredient quantity
 

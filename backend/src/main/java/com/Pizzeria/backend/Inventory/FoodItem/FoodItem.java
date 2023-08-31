@@ -1,6 +1,6 @@
 package com.Pizzeria.backend.Inventory.FoodItem;
 
-import com.Pizzeria.backend.Inventory.Ingregient.Ingredient;
+import com.Pizzeria.backend.Inventory.Ingregient.FoodItemIngredientDto;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -10,6 +10,7 @@ import java.util.List;
 @Data
 public class FoodItem {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long foodId;
 
     public void setFood_Id(Long foodId) {
@@ -22,9 +23,8 @@ public class FoodItem {
     private long price;
     private String description;
     private String category;
+    @ElementCollection
     private List<String> imageUrl;
-
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "food_item_id")
-    private List<Ingredient> ingredients;
+    @Transient
+    private List<FoodItemIngredientDto> ingredients;
 }
