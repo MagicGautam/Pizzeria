@@ -1,5 +1,7 @@
 package com.Pizzeria.backend.orders;
 
+import com.Pizzeria.backend.Finances.Finance;
+import com.Pizzeria.backend.Finances.FinanceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -7,10 +9,11 @@ import org.springframework.stereotype.Service;
 public class OrderService {
 
     private final OrderRepository orderRepository;
-
+    private final FinanceService financeService;
     @Autowired
-    public OrderService(OrderRepository orderRepository) {
+    public OrderService(OrderRepository orderRepository, FinanceService financeService) {
         this.orderRepository = orderRepository;
+        this.financeService = financeService;
     }
 
     public Order getOrder(Long orderId) {
@@ -19,7 +22,15 @@ public class OrderService {
     }
 
     public void addNewOrder(Order order) {
-        orderRepository.save(order);
+        Order savedOrder = orderRepository.save(order); // Save the order and get the saved instance
+        long price = savedOrder.getTotal();
+        Finance finance = Finance.builder()
+                .transactionId(savedOrder.getOrderId()) // Use the generated orderId from the saved order
+                .transactionDate(java.time.LocalDateTime.now())
+                .transactionType("Order Sale")
+                .amount(price)
+                .build();
+        financeService.addFinance(finance);
     }
 
     public void deleteOrder(Long orderId) {
