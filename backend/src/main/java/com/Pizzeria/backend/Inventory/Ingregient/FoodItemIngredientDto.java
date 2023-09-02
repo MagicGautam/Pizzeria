@@ -1,15 +1,19 @@
 package com.Pizzeria.backend.Inventory.Ingregient;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.Data;
 
-@Data
 @Entity
+@Data
 public class FoodItemIngredientDto {
-    private String name;
-    private int quantity; // The quantity of this ingredient used in the food item
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    private Long ingredientId; // Store the ID of the corresponding Ingredient
+    private int quantity;
 
     public void setId(Long id) {
         this.id = id;

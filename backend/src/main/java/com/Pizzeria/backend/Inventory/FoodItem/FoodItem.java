@@ -5,7 +5,6 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.util.List;
-
 @Entity
 @Data
 public class FoodItem {
@@ -13,18 +12,21 @@ public class FoodItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long foodId;
 
+    private String name;
+    private long price;
+    private String description;
+    private String category;
+
+    @ElementCollection
+    private List<String> imageUrl;
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<FoodItemIngredientDto> ingredients;
+
     public void setFood_Id(Long foodId) {
         this.foodId = foodId;
     }
     public Long getFood_Id() {
         return foodId;
     }
-    private String name;
-    private long price;
-    private String description;
-    private String category;
-    @ElementCollection
-    private List<String> imageUrl;
-    @Transient
-    private List<FoodItemIngredientDto> ingredients;
 }

@@ -21,7 +21,7 @@ public class FoodController {
 
     @GetMapping("/item/{foodId}")
     public ResponseEntity<FoodItemDto> getFoodItem(@PathVariable Long foodId) {
-        FoodItemDto foodItemDto = foodItemService.getFoodItem(foodId);
+        FoodItemDto foodItemDto = foodItemService.getFoodItemDTO(foodId);
         return ResponseEntity.ok(foodItemDto);
     }
 

@@ -3,10 +3,13 @@ package com.Pizzeria.backend.Inventory.FoodItem;
 import com.Pizzeria.backend.Inventory.Ingregient.FoodItemIngredientDto;
 import com.Pizzeria.backend.Inventory.Ingregient.Ingredient;
 import com.Pizzeria.backend.Inventory.Ingregient.IngredientRepository;
+import com.Pizzeria.backend.errors.IngredientNotFoundException;
 import com.Pizzeria.backend.errors.InsufficientStockException;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -21,9 +24,14 @@ public class FoodItemService {
         this.ingredientRepository = ingredientRepository;
     }
 
-    public FoodItemDto getFoodItem(Long foodId) {
+    public FoodItemDto getFoodItemDTO(Long foodId) {
         FoodItem foodItem = foodItemRepository.findByFoodId(foodId);
         return mapToDto(foodItem);
+    }
+
+    public FoodItem getFoodItem(Long foodId) {
+        FoodItem foodItem = foodItemRepository.findByFoodId(foodId);
+        return foodItem;
     }
 
     public List<FoodItemDto> getMenu() {
@@ -32,6 +40,24 @@ public class FoodItemService {
     }
 
     public void addNewFoodItem(FoodItem foodItem) {
+        List<FoodItemIngredientDto> ingredients = foodItem.getIngredients();
+        List<FoodItemIngredientDto> updatedIngredients = new ArrayList<>();
+
+        for (FoodItemIngredientDto ingredientDto : ingredients) {
+            Long ingredientId = ingredientDto.getIngredientId();
+            int quantity = ingredientDto.getQuantity();
+
+            Ingredient ingredient = ingredientRepository.findById(ingredientId)
+                    .orElseThrow(() -> new EntityNotFoundException("Ingredient not found"));
+
+            FoodItemIngredientDto updatedIngredientDto = new FoodItemIngredientDto();
+            updatedIngredientDto.setIngredientId(ingredientId);
+            updatedIngredientDto.setQuantity(quantity);
+
+            updatedIngredients.add(updatedIngredientDto);
+        }
+
+        foodItem.setIngredients(updatedIngredients);
         foodItemRepository.save(foodItem);
     }
 
@@ -53,21 +79,29 @@ public class FoodItemService {
         foodItemRepository.save(foodItem);
     }
 
-    public void reduceIngredientsFromInventory(FoodItemDto foodItemDto) {
-        FoodItem foodItem = mapToEntity(foodItemDto);
+    public void reduceIngredientsFromInventory(FoodItem foodItem) throws IngredientNotFoundException {
         List<FoodItemIngredientDto> foodItemIngredientDtos = foodItem.getIngredients();
 
         for (FoodItemIngredientDto foodItemIngredientDto : foodItemIngredientDtos) {
-           Ingredient ingredient= ingredientRepository.findByName(foodItemIngredientDto.getName());
-            int currentStock = ingredient.getStock();
-            int requiredQuantity = 1; // Assuming one food item reduces one ingredient quantity
+            Long ingredientId = foodItemIngredientDto.getIngredientId();
+            int requiredQuantity = foodItemIngredientDto.getQuantity(); // Use the quantity from the DTO
 
-            if (currentStock >= requiredQuantity) {
-                ingredient.setStock(currentStock - requiredQuantity);
-                ingredientRepository.save(ingredient);
+            // Fetch the ingredient from the database
+            Ingredient ingredient = ingredientRepository.findByIngredientId(ingredientId);
+
+            if (ingredient != null) {
+                int currentStock = ingredient.getStock();
+
+                if (currentStock >= requiredQuantity) {
+                    ingredient.setStock(currentStock - requiredQuantity);
+                    ingredientRepository.save(ingredient);
+                } else {
+                    throw new InsufficientStockException("Insufficient stock for ingredient: " + ingredient.getName());
+                    // Handle insufficient stock scenario
+                }
             } else {
-                throw new InsufficientStockException("Insufficient stock for ingredient: " + ingredient.getName());
-                // Handle insufficient stock scenario
+                throw new IngredientNotFoundException("Ingredient not found with ID: " + ingredientId);
+                // Handle ingredient not found scenario
             }
         }
     }
