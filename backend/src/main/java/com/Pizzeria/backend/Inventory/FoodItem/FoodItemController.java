@@ -19,15 +19,9 @@ public class FoodItemController {
     }
 
     @GetMapping("/{foodId}")
-    public ResponseEntity<FoodItemDto> getFoodItem(@PathVariable Long foodId) {
-        FoodItemDto foodItemDto = foodItemService.getFoodItem(foodId);
-        return ResponseEntity.ok(foodItemDto);
-    }
-
-    @GetMapping
-    public ResponseEntity<List<FoodItemDto>> getMenu() {
-        List<FoodItemDto> foodItems = foodItemService.getMenu();
-        return ResponseEntity.ok(foodItems);
+    public ResponseEntity<FoodItem> getFoodItem(@PathVariable Long foodId) {
+        FoodItem foodItem = foodItemService.getFoodItem(foodId);
+        return ResponseEntity.ok(foodItem);
     }
 
     @PostMapping("/addFoodItem")

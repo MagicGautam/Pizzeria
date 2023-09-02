@@ -1,5 +1,7 @@
 package com.Pizzeria.backend.Inventory.Ingregient;
 
+import com.Pizzeria.backend.Finances.Finance;
+import com.Pizzeria.backend.Finances.FinanceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -10,9 +12,11 @@ public class IngredientService {
 
     private final IngredientRepository ingredientRepository;
 
+    private final FinanceService financeService;
     @Autowired
-    public IngredientService(IngredientRepository ingredientRepository) {
+    public IngredientService(IngredientRepository ingredientRepository, FinanceService financeService) {
         this.ingredientRepository = ingredientRepository;
+        this.financeService = financeService;
     }
 
     public Ingredient getIngredient(Long ingredientId) {
@@ -33,6 +37,8 @@ public class IngredientService {
         double price= (ingredient.getPrice())*amount;
         ingredient.setStock(currentStock + amount);
         ingredientRepository.save(ingredient);
+        Finance finance =Finance.builder().id(2L).transactionDate(java.time.LocalDateTime.now()).transactionType("Restock").amount(price).build();
+        financeService.addFinance(finance);
 
     }
 
@@ -45,6 +51,8 @@ public class IngredientService {
             price=+(ingredient.getPrice())*amount;
             ingredientRepository.save(ingredient);
         }
+        Finance finance =Finance.builder().id(2L).transactionDate(java.time.LocalDateTime.now()).transactionType("Restock").amount(price).build();
+        financeService.addFinance(finance);
     }
 
     public void deleteIngredient(Long ingredientId) {
